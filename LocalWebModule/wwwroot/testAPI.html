@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>API Test Page</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<h1>API Test Page</h1>
+
+<div class="api_container">
+    <section class="api-section">
+        <h2>API: Login</h2>
+        <p class="route">POST /api/auth/auth</p>
+        <input type="text" id="login_user" placeholder="Логин">
+        <input type="password" id="password_user" placeholder="Пароль">
+        <button id="btn_login" onclick="login_run()">Отправить</button>
+        <p id="result_login" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: Register</h2>
+        <p class="route">POST /api/auth/register</p>
+        <input type="text" id="email_register" placeholder="Email">
+        <input type="text" id="login_register" placeholder="Логин">
+        <input type="password" id="password_register" placeholder="Пароль">
+        <button id="btn_register">Отправить</button>
+        <p id="result_register" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: AllUsers</h2>
+        <p class="route">GET /api/auth</p>
+        <button id="btn_get_all_users">Получить</button>
+        <p id="result_getAllUsers" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: UserById</h2>
+        <p class="route">GET /api/auth/{id}</p>
+        <input type="text" id="user_id" placeholder="ID">
+        <button id="btn_user_by_id">Получить</button>
+        <p id="result_user_id" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: UserByEmail</h2>
+        <p class="route">GET /api/auth/{email}/email</p>
+        <input type="text" id="user_email" placeholder="email">
+        <button id="btn_user_email">Поиск по email</button>
+        <p id="result_user_email" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: UserByLogin</h2>
+        <p class="route">GET /api/auth/{login}/login</p>
+        <input type="text" id="user_login" placeholder="логин">
+        <button id="btn_user_login">Поиск по логину</button>
+        <p id="result_user_login" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: UpdateUser</h2>
+        <p class="route">PUT /api/auth/{id}</p>
+        <input type="text" id="user_update_id" placeholder="ID">
+        <input type="text" id="user_update_email" placeholder="Email">
+        <input type="text" id="user_update_login" placeholder="Логин">
+        <input type="password" id="user_update_password" placeholder="Пароль">
+        <button id="btn_update_user">Изменить</button>
+        <p id="result_update_user" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: DeleteUser</h2>
+        <p class="route">DELETE /api/auth/{id}</p>
+        <input type="text" id="user_delete_id" placeholder="ID">
+        <button id="btn_delete_user">Удалить</button>
+        <p id="result_delete_user" class="result"></p>
+    </section>
+</div>
+
+<div class="api_container">
+    <section class="api-section">
+        <h2>API: Folder</h2>
+        <p class="route">POST /api/folders</p>
+        <input type="text" id="add_title" placeholder="Название">
+        <input type="text" id="add_parent_folder" placeholder="Родительская папка">
+        <input type="text" id="add_owner_id" placeholder="ID пользователя">
+        <button id="btn_add_folder">Добавить</button>
+        <p id="result_add_folder" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: AllFolders</h2>
+        <p class="route">GET /api/folders</p>
+        <button id="btn_get_all_folders">Получить</button>
+        <p id="result_getAllFoldres" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: FolderById</h2>
+        <p class="route">GET /api/folders/{id}</p>
+        <input type="text" id="folder_id" placeholder="ID">
+        <button id="btn_folder_by_id">Получить</button>
+        <p id="result_folder_id" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: FolderByOwnerId</h2>
+        <p class="route">GET /api/folders/{ownerId}/owner</p>
+        <input type="text" id="owner_id" placeholder="ID пользователя">
+        <button id="btn_folder_owner_id">Поиск по пользователю</button>
+        <p id="result_folder_owner_id" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: UserByLogin</h2>
+        <p class="route">GET /api/folders/{ownerId}/parent/{parentId}/owner</p>
+        <input type="text" id="get_owner_id" placeholder="ID пользователя">
+        <input type="text" id="get_parent_id" placeholder="ID родительской папки">
+        <button id="btn_folder_owner_id_parent_id">Поиск по пользователю и род. папки</button>
+        <p id="result_folder_owner_parent_id" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: UpdateFolder</h2>
+        <p class="route">PUT /api/folders/{id}</p>
+        <input type="text" id="folder_update_id" placeholder="ID">
+        <input type="text" id="folder_update_title" placeholder="Название">
+        <input type="text" id="folder_update_parent" placeholder="Родительская папка">
+        <button id="btn_update_folder">Изменить</button>
+        <p id="result_update_folder" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: DeleteFolder</h2>
+        <p class="route">DELETE /api/folders/{id}</p>
+        <input type="text" id="folder_delete_id" placeholder="ID">
+        <button id="btn_delete_folder">Удалить</button>
+        <p id="result_delete_folder" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: DeleteFolderByOwnerId</h2>
+        <p class="route">DELETE /api/folders/{ownerId}/owner/delete</p>
+        <input type="text" id="folder_delete_owner_id" placeholder="ID пользователя">
+        <button id="btn_delete_folder_owner_id">Удалить</button>
+        <p id="result_delete_folder_owner_id" class="result"></p>
+    </section>
+</div>
+
+<div class="api_container">
+    <section class="api-section">
+        <h2>API: Note</h2>
+        <p class="route">POST /api/notes</p>
+        <input type="text" id="add_note_title" placeholder="Название">
+        <input type="text" id="add_content" placeholder="Содержание">
+        <input type="text" id="add_note_owner_id" placeholder="ID пользователя">
+        <input type="text" id="add_note_folder_id" placeholder="ID папки">
+        <input type="text" id="add_note_type" placeholder="Категория заметки">
+        <button id="btn_add_note">Добавить</button>
+        <p id="result_add_note" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: AllNotes</h2>
+        <p class="route">GET /api/notes</p>
+        <button id="btn_get_all_notes">Получить</button>
+        <p id="result_getAllNotes" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: NoteById</h2>
+        <p class="route">GET /api/notes/{id}</p>
+        <input type="text" id="note_id" placeholder="ID">
+        <button id="btn_note_by_id">Получить</button>
+        <p id="result_note_id" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: NoteByOwnerId</h2>
+        <p class="route">GET /api/notes/{ownerId}/owner</p>
+        <input type="text" id="note_owner_id" placeholder="ID пользователя">
+        <button id="btn_notes_owner_id">Поиск по пользователю</button>
+        <p id="result_notes_owner_id" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: NoteByFolderId</h2>
+        <p class="route">GET /api/notes/{folderId}/folder</p>
+        <input type="text" id="note_folder_id" placeholder="ID папки">
+        <button id="btn_bote_folder_id">Поиск по папке</button>
+        <p id="result_note_folder_id" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: UpdateNote</h2>
+        <p class="route">PUT /api/notes/{id}</p>
+        <input type="text" id="note_update_id" placeholder="ID">
+        <input type="text" id="update_note_title" placeholder="Название">
+        <input type="text" id="update_note_title_content" placeholder="Содержание">
+        <input type="text" id="update_note_title_note_owner_id" placeholder="ID пользователя">
+        <input type="text" id="update_note_title_note_folder_id" placeholder="ID папки">
+        <input type="text" id="update_note_title_note_type" placeholder="Категория заметки">
+        <button id="btn_update_note">Изменить</button>
+        <p id="result_update_note" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: DeleteNote</h2>
+        <p class="route">DELETE /api/notes/{id}</p>
+        <input type="text" id="note_delete_id" placeholder="ID">
+        <button id="btn_delete_note">Удалить</button>
+        <p id="result_delete_note" class="result"></p>
+    </section>
+
+    <section class="api-section">
+        <h2>API: DeleteNoteByOwnerId</h2>
+        <p class="route">DELETE /api/notes/{ownerId}/owner</p>
+        <input type="text" id="note_delete_owner_id" placeholder="ID пользователя">
+        <button id="btn_delete_note_owner_id">Удалить</button>
+        <p id="result_delete_note_owner_id" class="result"></p>
+    </section>
+
+        <section class="api-section">
+            <h2>API: DeleteNoteByFolderId</h2>
+            <p class="route">DELETE /api/notes/{folderId}/folder</p>
+            <input type="text" id="note_delete_folder_id" placeholder="ID папки">
+            <button id="btn_delete_note_folder_id">Удалить</button>
+            <p id="result_delete_note_folder_id" class="result"></p>
+        </section>
+</div>
+
+
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

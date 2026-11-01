@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="LocalAiApi/LocalAiApi.csproj" />
+  <Project Path="LocalJsonModule/LocalJsonModule.csproj" />
+  <Project Path="LocalWebModule/LocalWebModule.csproj" />
+  <Project Path="NoteApp/NoteApp.csproj" />
+</Solution>

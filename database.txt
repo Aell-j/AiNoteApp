@@ -1,0 +1,37 @@
+CREATE TABLE "Users"
+(
+	id UUID PRIMARY KEY ,
+	login VARCHAR(255) NOT NULL , 
+	email VARCHAR(255) NOT NULL , 
+	password TEXT NOT NULL , 
+	--Дата создания (у кого есть)
+);
+
+CREATE TABLE "Folders"
+(
+	id UUID PRIMARY KEY ,
+	title VARCHAR(255) NOT NULL,
+	parent_folder_id UUID NULL ,
+	owner_id UUID NOT NULL , 
+	created_at TIMESTAMP NOT NULL,
+	
+	FOREIGN KEY (owner_id) REFERENCES "Users"(id),
+	FOREIGN KEY (parent_folder_id) REFERENCES "Folders"(id)
+);
+
+CREATE TABLE "Notes"
+(
+	id UUID PRIMARY KEY ,
+	title VARCHAR(255) NOT NULL ,
+	content TEXT NOT NULL , 
+	owner_id UUID NOT NULL , 
+	folder_id UUID NULL ,
+	created_at TIMESTAMP NOT NULL ,
+	updated_at TIMESTAMP NOT NULL , 
+	is_favorite BOOLEAN NOT NULL , 	
+	is_archive BOOLEAN NOT NULL , 
+	note_type VARCHAR(50) NULL,	
+
+	FOREIGN KEY (owner_id) REFERENCES "Users"(id),
+	FOREIGN KEY (folder_id) REFERENCES "Folders"(id)
+);

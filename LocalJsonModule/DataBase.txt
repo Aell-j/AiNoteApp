@@ -1,0 +1,402 @@
+create table "aelina"."Users"(
+    id uuid primary key ,
+    login varchar(255) not null unique ,
+    email varchar(255) not null unique ,
+    password_hash text not null,
+    created_at timestamp not null
+);
+
+DROP TABLE aelina."Folders" CASCADE ;
+
+
+create table "aelina"."Folders"(
+    id uuid primary key ,
+    title varchar(255) not null ,
+    owner_id uuid not null,
+    parent_folder_id uuid null,
+    created_at timestamp not null,
+
+    constraint fk_folders_owner foreign key (owner_id) references aelina."Users"(id) on delete cascade,
+    constraint fk_folders_parents foreign key (parent_folder_id) references aelina."Folders"(id) on delete cascade
+);
+
+create table "aelina"."Notes"(
+    id uuid primary key ,
+    title varchar(255) not null,
+    content text not null,
+    owner_id uuid not null,
+    folder_id uuid null,
+
+    created_at timestamp not null,
+    updated_at timestamp not null,
+
+    is_favorite boolean not null  DEFAULT FALSE,
+    is_archive boolean not null default false,
+
+    timer timestamp null,
+    note_type varchar(50) null,
+
+    constraint fk_notes_owner foreign key (owner_id) references aelina."Users"(id) on delete cascade,
+    constraint fk_notes_folder foreign key (folder_id) references  aelina."Folders"(id) on delete set null
+);
+
+/* USER */
+
+CREATE OR REPLACE FUNCTION aelina.get_all_users()
+    RETURNS SETOF aelina."Users"
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT * FROM aelina."Users";
+    END
+    $$;
+
+SELECT * FROM aelina.get_all_users();
+
+CREATE OR REPLACE FUNCTION aelina.get_by_id(u_id UUID)
+    RETURNS SETOF aelina."Users"
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT * FROM aelina."Users" WHERE id = u_id;
+    END;
+    $$;
+
+SELECT * FROM aelina.get_by_id('2eb754e1-a103-4937-beac-85d49293d6b8');
+
+CREATE OR REPLACE FUNCTION aelina.get_by_login(u_login VARCHAR)
+    RETURNS SETOF aelina."Users"
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT * FROM aelina."Users" WHERE login = u_login;
+    END;
+    $$;
+
+SELECT * FROM aelina.get_by_login('1');
+
+CREATE OR REPLACE FUNCTION aelina.get_by_email(u_email VARCHAR)
+    RETURNS SETOF aelina."Users"
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT * FROM aelina."Users" WHERE email = u_email;
+    END;
+    $$;
+
+SELECT * FROM aelina.get_by_email('1');
+
+CREATE OR REPLACE PROCEDURE aelina.add_user(
+    u_id UUID,
+    u_login VARCHAR,
+    u_email VARCHAR,
+    u_password VARCHAR,
+    u_created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+)
+LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        INSERT INTO aelina."Users"(id, login, email, password_hash, created_at)
+        VALUES (u_id, u_login, u_email, u_password, u_created_at);
+    END;
+    $$;
+
+CALL aelina.add_user(
+    '550e8400-e29b-41d4-a716-446655440002',
+    'anna@example.com',
+    'anna',
+    'hash_password_456'
+);
+
+CREATE OR REPLACE PROCEDURE aelina.update_user(
+    u_id UUID,
+    u_login VARCHAR,
+    u_email VARCHAR,
+    u_password VARCHAR
+)
+LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        UPDATE aelina."Users"
+        SET
+            login = u_login,
+            email = u_email,
+            password_hash = u_password
+        WHERE id = u_id;
+    END;
+    $$;
+
+CALL aelina.update_user('5b9b697b-f2da-4383-b635-e1791e65a050', 'login', 'email.com', '123');
+
+CREATE OR REPLACE PROCEDURE aelina.delete_user(u_id UUID)
+LANGUAGE plpgsql
+AS $$
+    BEGIN
+        DELETE FROM aelina."Users"
+        WHERE id = u_id;
+    END;
+    $$;
+
+CALL aelina.delete_user('550e8400-e29b-41d4-a716-446655440001');
+
+
+/* NOTE */
+
+CREATE OR REPLACE FUNCTION aelina.get_all_notes()
+    RETURNS SETOF aelina."Notes"
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT * FROM aelina."Notes";
+    END
+    $$;
+
+SELECT * FROM aelina.get_all_notes();
+
+CREATE OR REPLACE FUNCTION aelina.get_all_by_id_note(n_id UUID)
+    RETURNS SETOF aelina."Notes"
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT * FROM aelina."Notes" WHERE id = n_id;
+    END;
+    $$;
+
+SELECT * FROM aelina.get_all_by_id_note('d12c5cf3-13ba-4d13-ba78-48bcc659d471');
+
+CREATE OR REPLACE FUNCTION aelina.get_all_by_owner_id_note(n_owner_id UUID)
+    RETURNS SETOF aelina."Notes"
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT * FROM aelina."Notes" WHERE owner_id = n_owner_id;
+    END;
+    $$;
+
+SELECT * FROM aelina.get_all_by_owner_id_note('550e8400-e29b-41d4-a716-446655440002');
+
+CREATE OR REPLACE FUNCTION aelina.get_all_by_folder_id_note(n_folder_id UUID)
+    RETURNS SETOF aelina."Notes"
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT * FROM aelina."Notes" WHERE folder_id = n_folder_id;
+    END;
+    $$;
+
+SELECT * FROM aelina.get_all_by_folder_id_note('eb58acdd-d7c8-4614-bf8e-f301da0655a7');
+
+CREATE OR REPLACE PROCEDURE aelina.add_user(
+    u_id UUID,
+    u_login VARCHAR,
+    u_email VARCHAR,
+    u_password VARCHAR,
+    u_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        INSERT INTO aelina."Users"(id, email, login, password_hash, created_at)
+        VALUES (u_id, u_login,u_email, u_password, u_created_at);
+        END;
+    $$;
+
+CREATE OR REPLACE PROCEDURE aelina.add_note(
+    n_id UUID,
+    n_title VARCHAR,
+    n_content VARCHAR,
+    n_owner_id UUID,
+    n_folder_id UUID,
+    n_created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    n_updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    n_is_favorite BOOLEAN DEFAULT FALSE,
+    n_is_archive BOOLEAN DEFAULT FALSE,
+    n_timer TIMESTAMPTZ DEFAULT NULL,
+    n_note_type VARCHAR DEFAULT NULL
+)
+LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        INSERT INTO aelina."Notes"(id, title, content, owner_id, folder_id, created_at, updated_at, is_favorite, is_archive, timer, note_type)
+        VALUES (n_id, n_title, n_content, n_owner_id, n_folder_id, n_created_at, n_updated_at, n_is_favorite, n_is_archive, n_timer, n_note_type);
+    END;
+    $$;
+
+CREATE OR REPLACE PROCEDURE aelina.update_note(
+    n_id UUID,
+    n_title VARCHAR,
+    n_content VARCHAR,
+    n_folder_id UUID DEFAULT NULL,
+    n_updated_at TIMESTAMPTZ DEFAULT NULL,
+    n_is_favorite BOOLEAN DEFAULT NULL,
+    n_is_archive BOOLEAN DEFAULT NULL,
+    n_note_type VARCHAR DEFAULT NULL
+)
+LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        UPDATE aelina."Notes"
+        SET
+            title = n_title,
+            content = n_content,
+            folder_id = COALESCE(n_folder_id, folder_id),
+            updated_at = COALESCE(n_updated_at, now()),
+            is_favorite = COALESCE(n_is_favorite, is_favorite),
+            is_archive = COALESCE(n_is_archive, is_archive),
+            note_type = COALESCE(n_note_type, note_type)
+        WHERE id = n_id;
+    END;
+    $$;
+
+CALL aelina.update_note('d12c5cf3-13ba-4d13-ba78-48bcc659d471', 'Заметка тест', 'text');
+
+CREATE OR REPLACE PROCEDURE aelina.delete_note(n_id UUID)
+LANGUAGE plpgsql
+AS $$
+    BEGIN
+        DELETE FROM aelina."Notes"
+        WHERE id = n_id;
+    END;
+    $$;
+
+CALL aelina.delete_note('7f3c2a91-6d84-4b17-9e52-8a1f3c6d7420');
+
+CREATE OR REPLACE PROCEDURE aelina.CE(n_owner_id UUID)
+
+LANGUAGE plpgsql
+AS $$
+    BEGIN
+        DELETE FROM aelina."Notes"
+        WHERE owner_id = n_owner_id;
+    END;
+    $$;
+
+CALL aelina.delete_note_owner_id('550e8400-e29b-41d4-a716-446655440002');
+
+CREATE OR REPLACE PROCEDURE aelina.delete_note_folder_id(n_folder_id UUID)
+LANGUAGE plpgsql
+AS $$
+    BEGIN
+        DELETE FROM aelina."Notes"
+        WHERE folder_id = n_folder_id;
+    END;
+    $$;
+
+CALL aelina.delete_note_folder_id('');
+
+/*  FOLDER  */
+
+
+CREATE OR REPLACE FUNCTION aelina.get_all_folders()
+    RETURNS SETOF aelina."Folders"
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT * FROM aelina."Folders";
+    END
+    $$;
+
+SELECT * FROM aelina.get_all_folders();
+
+CREATE OR REPLACE FUNCTION aelina.get_by_folder_id(f_id UUID)
+    RETURNS SETOF aelina."Folders"
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT * FROM aelina."Folders" WHERE id = f_id;
+    END;
+    $$;
+
+SELECT * FROM aelina.get_by_folder_id('550e8400-e29b-41d4-a716-446655443331');
+
+CREATE OR REPLACE FUNCTION aelina.get_by_owner_id(f_owner_id UUID)
+    RETURNS SETOF aelina."Folders"
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT * FROM aelina."Folders" WHERE owner_id = f_owner_id;
+    END;
+    $$;
+
+SELECT * FROM aelina.get_by_owner_id('550e8400-e29b-41d4-a716-446655440002');
+
+CREATE OR REPLACE FUNCTION aelina.get_by_parent_folder_id(f_owner_id UUID, f_parent_folder_id UUID)
+    RETURNS SETOF aelina."Folders"
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT * FROM aelina."Folders"
+        WHERE owner_id = f_owner_id
+        AND parent_folder_id = f_parent_folder_id;
+    END;
+    $$;
+
+SELECT * FROM aelina.get_by_parent_folder_id('550e8400-e29b-41d4-a716-446655440002', 'eb58acdd-d7c8-4614-bf8e-f301da0655a7');
+
+CREATE OR REPLACE PROCEDURE aelina.add_folder(
+    f_id UUID,
+    f_title VARCHAR,
+    f_owner_id UUID,
+    f_parent_folder_id UUID DEFAULT NULL,
+    f_created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+)
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    INSERT INTO aelina."Folders"(id, title, owner_id, parent_folder_id, created_at)
+    VALUES (f_id, f_title, f_owner_id, f_parent_folder_id, f_created_at);
+END;
+$$;
+
+CALL aelina.add_folder('7c9e6679-7425-40de-944b-e07fc1f90ae7','Folder_2', '550e8400-e29b-41d4-a716-446655440002', 'eb58acdd-d7c8-4614-bf8e-f301da0655a7')
+
+CREATE OR REPLACE PROCEDURE aelina.update_folder(
+    f_id UUID,
+    f_title VARCHAR,
+    f_parent_folder_id UUID
+)
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    UPDATE aelina."Folders"
+    SET title = f_title, parent_folder_id = f_parent_folder_id
+    WHERE id = f_id;
+END;
+$$;
+
+CALL aelina.update_folder('7c9e6679-7425-40de-944b-e07fc1f90ae7', 'FOLDER', 'eb58acdd-d7c8-4614-bf8e-f301da0655a7');
+
+CREATE OR REPLACE PROCEDURE aelina.delete_folder(f_id UUID)
+LANGUAGE plpgsql
+AS $$
+    BEGIN
+        DELETE FROM aelina."Folders"
+        WHERE id = f_id;
+    END;
+    $$;
+
+CALL aelina.delete_folder('550e8400-e29b-41d4-a716-446655443331');
+
+CREATE OR REPLACE PROCEDURE aelina.delete_folder_by_owner_id(f_owner_id UUID)
+LANGUAGE plpgsql
+AS $$
+    BEGIN
+        DELETE FROM aelina."Folders"
+        WHERE owner_id = f_owner_id;
+    END;
+    $$;
+

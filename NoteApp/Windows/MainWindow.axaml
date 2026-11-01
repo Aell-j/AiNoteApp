@@ -1,0 +1,563 @@
+
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="using:NoteApp"
+        mc:Ignorable="d"
+        x:Class="NoteApp.MainWindow"
+        Title="NOTE — Мои заметки и AI"
+        Width="1590"
+        Height="800"
+        MinWidth="900"
+        MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        RequestedThemeVariant="Light"
+        Background="#F7F7F4">
+
+    <Window.Styles>
+        <Style Selector="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.nav-button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#656579"/>
+            <Setter Property="CornerRadius" Value="9"/>
+        </Style>
+        <Style Selector="Button.nav-button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#F4F1E8"/>
+            <Setter Property="Foreground" Value="#29283A"/>
+        </Style>
+        <Style Selector="Button.nav-button.active">
+            <Setter Property="Background" Value="#FFF5CC"/>
+            <Setter Property="Foreground" Value="#383323"/>
+        </Style>
+        <Style Selector="Button.tool-button">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="Foreground" Value="#39384E"/>
+            <Setter Property="BorderBrush" Value="#E7E5DD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.tool-button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FBFAF6"/>
+        </Style>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#29283A"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="#FFF0ED"/>
+            <Setter Property="Foreground" Value="#B84638"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="Border.note-card">
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="18"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#ECEAE3"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Border.note-card:pointerover">
+            <Setter Property="BorderBrush" Value="#FFC928"/>
+            <Setter Property="Background" Value="#FFFDF7"/>
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#29283A"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#E7E5DD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="9"/>
+            <Setter Property="Padding" Value="12,9"/>
+        </Style>
+        <Style Selector="TreeViewItem">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#4A495C"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid x:Name="MainGrid" ColumnDefinitions="238,*,390">
+        
+        <Border Grid.Column="0"
+                Background="#FFFFFF"
+                BorderBrush="#EAE8E1"
+                BorderThickness="0,0,1,0">
+            <Grid>
+                <Grid x:Name="LeftContent" RowDefinitions="Auto,*,Auto">
+                    <Grid Grid.Row="0"
+                          Margin="18,20,12,22"
+                          ColumnDefinitions="*,Auto"
+                          ColumnSpacing="6">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    VerticalAlignment="Center">
+                            <Border Width="42" Height="42"
+                                    CornerRadius="13" Background="#FFC928">
+                                <TextBlock Text="N" FontSize="20" FontWeight="Bold"
+                                           Foreground="#29283A"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center" Spacing="1">
+                                <TextBlock Text="NOTE" FontSize="20" FontWeight="Bold"
+                                           Foreground="#29283A"/>
+                            </StackPanel>
+                            </StackPanel>
+                        <Button x:Name="CollapseLeftButton"
+                                Grid.Column="1"
+                                Content="‹"
+                                Width="28" Height="32" Padding="0"
+                                Background="Transparent" Foreground="#77768A"
+                                HorizontalContentAlignment="Center"
+                                ToolTip.Tip="Свернуть меню"/>
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="1">
+                        <StackPanel Margin="18">
+                            <Button x:Name="AddNoteButton"
+                                    Height="46"
+                                    HorizontalContentAlignment="Left"
+                                    VerticalContentAlignment="Center"
+                                    HorizontalAlignment="Stretch"
+                                    Background="#FFC928"
+                                    Foreground="#29283A"
+                                    FontWeight="SemiBold"
+                                    FontSize="14"
+                                    CornerRadius="4"
+                                    Margin="0,0,0,20"
+                                    Padding="15,0">
+                                <StackPanel Orientation="Horizontal" Spacing="11">
+                                    <TextBlock Text="+" FontSize="20"
+                                               VerticalAlignment="Center"
+                                               Padding="0,0,0, 3"/>
+                                    <TextBlock Text="Новая заметка"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <TextBlock Text="БИБЛИОТЕКА" FontSize="10"
+                                       FontWeight="Bold" Foreground="#9998A6"
+                                       Margin="10,0,0,7"/>
+                            <Button x:Name="FilterAllButton" Classes="nav-button active"
+                                    HorizontalAlignment="Stretch"
+                                    Content="Все заметки"/>
+                            <Button x:Name="FilterFavoriteButton" Classes="nav-button"
+                                    HorizontalAlignment="Stretch"
+                                    Content="Избранное"/>
+                            <Button x:Name="FilterRecentButton" Classes="nav-button"
+                                    HorizontalAlignment="Stretch"
+                                    Content="Недавние"/>
+                            <Button x:Name="FilterArchiveButton" Classes="nav-button"
+                                    HorizontalAlignment="Stretch"
+                                    Content="Корзина"/>
+
+                            <Grid ColumnDefinitions="*,Auto" Margin="10,26,6,8">
+                                <TextBlock x:Name="FoldersHeader" Text="МОИ ПАПКИ" FontSize="10"
+                                           FontWeight="Bold" Foreground="#9998A6"
+                                           VerticalAlignment="Center"/>
+                                <Button x:Name="AddFolderButton" Grid.Column="1"
+                                        Content="+" Width="27" Height="27"
+                                        Padding="1" Background="#F5F4F0"
+                                        Foreground="#555468"
+                                        HorizontalContentAlignment="Center"
+                                        CornerRadius="7"
+                                        ToolTip.Tip="Добавить папку"/>
+                            </Grid>
+
+                            <TreeView x:Name="NotesTreeView"
+                                      Background="Transparent"
+                                      BorderThickness="0" Padding="0"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <Border Grid.Row="2" BorderBrush="#ECEAE3"
+                            BorderThickness="0,1,0,0" Padding="16,14">
+                        <Grid ColumnDefinitions="38,*,Auto">
+                            <Border Width="36" Height="36"
+                                    CornerRadius="12" Background="#FFF0B0">
+                                <TextBlock x:Name="UserInitialText" Text="U" FontSize="17" FontWeight="Bold"
+                                           Foreground="#51451F"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center"
+                                        Margin="10,0,0,0" Spacing="3">
+                                <TextBlock x:Name="UserNameText" Text="userLogin" FontSize="12"
+                                           FontWeight="SemiBold" Foreground="#29283A"/>
+                                <TextBlock x:Name="UserEmailText" Text="email@mail.com" FontSize="10"
+                                           Foreground="#9998A6"/>
+                            </StackPanel>
+                            <Button x:Name="AccountButton" Grid.Column="2"
+                                    Content="⋯" Width="30" Height="30"
+                                    Padding="0" Background="Transparent"
+                                    Foreground="#77768A"
+                                    HorizontalContentAlignment="Center"
+                                    ToolTip.Tip="Аккаунт и выход">
+                                <Button.Flyout>
+                                    <MenuFlyout>
+                                        <MenuItem Header="Выйти из аккаунта" Click="OnExitClick"/>
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </Button>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <StackPanel x:Name="LeftRail" IsVisible="False"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Top"
+                            Margin="0,12,0,0" Spacing="12">
+                    <Button x:Name="ExpandLeftButton" Content="›"
+                            Width="42" Height="42" Background="#FFC928"
+                            Foreground="#29283A"
+                            HorizontalContentAlignment="Center"
+                            ToolTip.Tip="Развернуть меню"/>
+                    <Border Width="38" Height="38" CornerRadius="12"
+                            Background="#FFF0B5">
+                        <TextBlock Text="N" FontSize="19" FontWeight="Bold"
+                                   Foreground="#29283A"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="МЕНЮ" FontSize="9" Foreground="#77768A"
+                               HorizontalAlignment="Center"
+                               ToolTip.Tip="Навигация и папки"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <Grid Grid.Column="1" RowDefinitions="Auto,*"
+              Margin="28,30,24,26">
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <StackPanel VerticalAlignment="Center" Spacing="5">
+                    <TextBlock x:Name="HeaderText" Text="Мои заметки" FontSize="30"
+                               FontWeight="Bold" Foreground="#29283A"/>
+                </StackPanel>
+                <Grid Grid.Column="1" Width="210" Height="42"
+                      VerticalAlignment="Center">
+                    <TextBox x:Name="SearchTextBox"
+                             PlaceholderText="Поиск заметок..."
+                             VerticalContentAlignment="Center"
+                             Padding="35,9,12,9"/>
+                    <TextBlock Text="⌕" FontSize="23" Foreground="#89889B"
+                               Margin="12,0,0,2" VerticalAlignment="Center"
+                               HorizontalAlignment="Left"
+                               IsHitTestVisible="False"/>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="0,20,0,0">
+                
+                <ScrollViewer x:Name="NotesListScroll" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="20">
+                        <Border Background="#FFFFFF" BorderBrush="#ECEAE3"
+                                BorderThickness="1" CornerRadius="13" Padding="18,15">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Spacing="4" VerticalAlignment="Center">
+                                    <TextBlock Text="Твоя библиотека" FontSize="15"
+                                               FontWeight="SemiBold" Foreground="#29283A"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Background="#FFF3C4"
+                                        CornerRadius="10" Padding="13,8"
+                                        VerticalAlignment="Center">
+                                    <TextBlock x:Name="NotesCountBadge" Text="0 заметок" FontSize="12"
+                                               FontWeight="SemiBold" Foreground="#66521B"/>
+                                    </Border>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock x:Name="SectionHeaderText" Text="Недавно изменённые" FontSize="17"
+                                   FontWeight="SemiBold" Foreground="#29283A"/>
+                        
+                        <ItemsControl x:Name="NotesHost" Tapped="OnNotesHostTapped">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.Styles>
+                                <Style Selector="TextBlock.card-category">
+                                    <Setter Property="FontSize" Value="9"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="Foreground" Value="#6E61BB"/>
+                                </Style>
+                                <Style Selector="TextBlock.card-title">
+                                    <Setter Property="FontSize" Value="17"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Foreground" Value="#29283A"/>
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="MaxLines" Value="2"/>
+                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                </Style>
+                                <Style Selector="TextBlock.card-preview">
+                                    <Setter Property="FontSize" Value="12"/>
+                                    <Setter Property="Foreground" Value="#77768A"/>
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="MaxLines" Value="3"/>
+                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                </Style>
+                                <Style Selector="TextBlock.card-date">
+                                    <Setter Property="FontSize" Value="10"/>
+                                    <Setter Property="Foreground" Value="#9998A6"/>
+                                </Style>
+                            </ItemsControl.Styles>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="local:NoteCard">
+                                    <Border Classes="note-card"
+                                            Width="330"
+                                            MinHeight="168"
+                                            Margin="0,0,14,14">
+                                        <Grid RowDefinitions="Auto,Auto,*,Auto" RowSpacing="10">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <TextBlock Classes="card-category" Text="{Binding Category}"/>
+                                                <TextBlock Classes="card-category"
+                                                           Text="★"
+                                                           Foreground="#FFB428"
+                                                           IsVisible="{Binding IsFavorite}"/>
+                                            </StackPanel>
+                                            <TextBlock Grid.Row="1"
+                                                       Classes="card-title"
+                                                       Text="{Binding Title}"/>
+                                            <TextBlock Grid.Row="2"
+                                                       Classes="card-preview"
+                                                       Text="{Binding Preview}"/>
+                                            <TextBlock Grid.Row="3"
+                                                       Classes="card-date"
+                                                       Text="{Binding DateText}"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock x:Name="EmptyStateText"
+                                   Text="Здесь пусто. Создай заметку кнопкой «Новая заметка»."
+                                   FontSize="13" Foreground="#9998A6"
+                                   TextWrapping="Wrap"
+                                   IsVisible="False"
+                                   Margin="0,20,0,10"/>
+                    </StackPanel>
+                </ScrollViewer>
+                
+                <Border x:Name="EditorView" IsVisible="False"
+                        Background="#FFFFFF" BorderBrush="#ECEAE3"
+                        BorderThickness="1" CornerRadius="14" Padding="20">
+                    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="14">
+                        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                            <Button x:Name="BackButton" Classes="tool-button"
+                                    Content="← К списку" Width="120"/>
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                       FontSize="13" Foreground="#89889B"
+                                       x:Name="EditorContextText" Text="Без папки"/>
+                            <TextBlock Grid.Column="2" VerticalAlignment="Center"
+                                       FontSize="11" Foreground="#A6A5B4"
+                                       x:Name="EditorStampText" Text=""/>
+                        </Grid>
+
+                        <TextBox Grid.Row="1" x:Name="EditorTitleTextBox"
+                                 PlaceholderText="Заголовок заметки"
+                                 FontSize="22" FontWeight="SemiBold"
+                                 Padding="12,10"/>
+
+                        <TextBlock Grid.Row="2" Text="СОДЕРЖИМОЕ" FontSize="10"
+                                   FontWeight="Bold" Foreground="#9998A6"/>
+
+                        <TextBox Grid.Row="3" x:Name="EditorContentTextBox"
+                                 PlaceholderText="Пиши свободно..."
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 VerticalContentAlignment="Top"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+
+                        <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="10">
+                            <Button x:Name="SaveButton" Classes="tool-button primary"
+                                    Content="Сохранить" Width="140"/>
+                            <Button x:Name="FavoriteButton" Classes="tool-button"
+                                    Content="★ В избранное" Width="150"/>
+                            <Button x:Name="ArchiveButton" Classes="tool-button"
+                                    Content="В корзину" Width="130"/>
+                            <Button x:Name="DeleteButton" Classes="tool-button danger"
+                                    Content="Удалить" Width="120"/>
+                            <TextBlock x:Name="EditorStatusText" VerticalAlignment="Center"
+                                       Margin="8,0,0,0" FontSize="12"
+                                       Foreground="#B84638" Text=""/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+        
+        <Border Grid.Column="2" Background="#FFFFFF"
+                BorderBrush="#EAE7DF" BorderThickness="1,0,0,0">
+            <Grid>
+                <Grid x:Name="RightContent" RowDefinitions="Auto,Auto,*,Auto">
+                    <Border Grid.Row="0" Background="#FFFDF7"
+                            BorderBrush="#F0EBDD" BorderThickness="0,0,0,1"
+                            Padding="18,18">
+                        <Grid ColumnDefinitions="42,*,Auto" ColumnSpacing="10">
+                            <Border Width="42" Height="42" CornerRadius="13"
+                                    Background="#FFF0B5" VerticalAlignment="Center">
+                                <TextBlock Text="✦" FontSize="26" Foreground="#9A6B00"
+                                           Padding="2"
+                                           HorizontalAlignment="Center" 
+                                           VerticalAlignment="Top"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                                <TextBlock x:Name="TitleText" Text="AI Analysis"
+                                           FontSize="19" FontWeight="Bold" Foreground="#29283A"/>
+                            </StackPanel>
+                            <Button x:Name="CollapseRightButton" Grid.Column="2"
+                                    Content="›" Width="28" Height="32" Padding="0"
+                                    Background="Transparent" Foreground="#77768A"
+                                    HorizontalContentAlignment="Center"
+                                    ToolTip.Tip="Свернуть панель AI"/>
+                        </Grid>
+                    </Border>
+
+                    <StackPanel Grid.Row="1" Margin="18,18,18,10" Spacing="8">
+                        <TextBlock Text="АНАЛИЗ ЗАМЕТКИ" FontSize="11"
+                                   FontWeight="Bold" Foreground="#A18B51"/>
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <TextBlock x:Name="AiStatusDot" Text="●" FontSize="11"
+                                       Foreground="#C9C8D6" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="AiStatusText" Grid.Column="1"
+                                       Text="Проверяю связь с LocalAiApi..."
+                                       FontSize="11" Foreground="#8D8C9C"
+                                       TextWrapping="Wrap" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <Border Grid.Row="2" Background="#FFFEFB"
+                            BorderBrush="#EAE7DF" BorderThickness="1"
+                            CornerRadius="14" Margin="18,0,18,16" Padding="14">
+                        <Grid RowDefinitions="Auto,*" RowSpacing="12">
+                            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                                <TextBlock Text="РЕЗУЛЬТАТ" FontSize="11"
+                                           FontWeight="Bold" Foreground="#8586A5"
+                                           VerticalAlignment="Center"/>
+                                <Border Grid.Column="1" Background="#FFF0B5"
+                                        CornerRadius="7" Padding="8,4">
+                                    <TextBlock Text="AI" FontSize="10"
+                                               FontWeight="Bold" Foreground="#806000"/>
+                                </Border>
+                            </Grid>
+                            <TextBox x:Name="ResponseTextBox" Grid.Row="1"
+                                     IsReadOnly="True" AcceptsReturn="True"
+                                     TextWrapping="Wrap" VerticalContentAlignment="Top"
+                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                     Background="Transparent" BorderThickness="0" Padding="0"
+                                     FontSize="13" Foreground="#39384E"
+                                     PlaceholderText="Ожидание результата..."/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="3" Background="#FFFDF7"
+                            BorderBrush="#F0EBDD" BorderThickness="0,1,0,0"
+                            Padding="18,16">
+                        <Button x:Name="GenerateButton"
+                                Content="✦  Сгенерировать анализ"
+                                Height="46" Background="#FFC928"
+                                Foreground="#202238" FontWeight="SemiBold"
+                                CornerRadius="12" HorizontalAlignment="Stretch"
+                                VerticalContentAlignment="Center"
+                                HorizontalContentAlignment="Center" FontSize="13"/>
+                    </Border>
+                </Grid>
+
+                <StackPanel x:Name="RightRail" IsVisible="False"
+                            HorizontalAlignment="Center" VerticalAlignment="Top"
+                            Margin="0,12,0,0" Spacing="12">
+                    <Button x:Name="ExpandRightButton" Content="‹"
+                            Width="42" Height="42" Background="#FFF0B5"
+                            Foreground="#29283A" HorizontalContentAlignment="Center"
+                            ToolTip.Tip="Развернуть панель AI"/>
+                    <Border Width="38" Height="38" CornerRadius="12" Background="#FFF0B5">
+                        <TextBlock Text="✦" FontSize="22" Foreground="#9A6B00"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="AI" FontSize="11" FontWeight="Bold"
+                               Foreground="#77768A" HorizontalAlignment="Center"
+                               ToolTip.Tip="Помощник AI"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+         <Border x:Name="MessageOverlay"
+                IsVisible="False"
+                Grid.ColumnSpan="3"
+                Background="#33202238"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+
+            <Border HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    MaxWidth="340"
+                    Margin="24"
+                    Background="#FFFFFF"
+                    BorderBrush="#F0E9D8"
+                    BorderThickness="1"
+                    CornerRadius="20"
+                    Padding="24">
+
+                <StackPanel Spacing="16">
+
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="10"
+                                VerticalAlignment="Center">
+
+                        <Border Width="34"
+                                Height="34"
+                                CornerRadius="10"
+                                Background="#FFF3C4">
+                            <TextBlock Text="!"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       Foreground="#B98200"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+
+                        <TextBlock Text="Уведомление"
+                                   FontSize="17"
+                                   FontWeight="Bold"
+                                   Foreground="#202238"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <TextBlock x:Name="MessageText"
+                               TextWrapping="Wrap"
+                               FontSize="15"
+                               Foreground="#8586A5"/>
+
+                    <Button Content="Понятно"
+                            HorizontalAlignment="Stretch"
+                            Height="44"
+                            Background="#FFC928"
+                            Foreground="#202238"
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            CornerRadius="12"
+                            BorderThickness="0"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="OnMessageCloseClick"/>
+                </StackPanel>
+            </Border>
+        </Border>
+    </Grid>
+</Window>

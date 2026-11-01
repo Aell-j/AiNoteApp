@@ -1,0 +1,15 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="NoteApp.InputDialog"
+        Width="360" Height="160"
+        Title="Редактирование"
+        WindowStartupLocation="CenterOwner">
+    <StackPanel Margin="16" Spacing="12">
+        <TextBlock Text="Введите новое название:"/>
+        <TextBox x:Name="InputBox"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button Content="Отмена" Click="OnCancel"/>
+            <Button Content="OK" Click="OnOk"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

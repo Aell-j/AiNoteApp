@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="NoteApp/App.axaml" value="NoteApp/NoteApp.csproj" />
+        <entry key="NoteApp/Elements/InputDialog.axaml" value="NoteApp/NoteApp.csproj" />
+        <entry key="NoteApp/Windows/LoginWindow.axaml" value="NoteApp/NoteApp.csproj" />
+        <entry key="NoteApp/Windows/MainWindow.axaml" value="NoteApp/NoteApp.csproj" />
+        <entry key="NoteApp/Windows/RegisterWindow.axaml" value="NoteApp/NoteApp.csproj" />
+      </map>
+    </option>
+  </component>
+</project>
